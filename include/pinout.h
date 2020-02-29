@@ -1,8 +1,8 @@
 #ifndef PINOUT
 #define PINOUT
     //Ble communication
-    #define SStransmitt 2
-    #define SSreceiver 3
+    #define SStransmitt 3
+    #define SSreceiver 4
     // mpu9250
     #define SDA A4
     #define SCL A5

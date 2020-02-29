@@ -15,7 +15,8 @@ float Pid::calculate(float error)
 {
     unsigned long now = millis();
     float delta_time = (now - last_time) * 0.001;
-    error_sum += (error + last_error)/2 *ki * delta_time;
+    //error_sum += ((error + last_error)/2) *ki * delta_time;
+    error_sum += error *ki * delta_time;
     if (error_sum > MAX_ERROR_SUM)
         error_sum = MAX_ERROR_SUM;
     if (error_sum < MIN_ERROR_SUM)

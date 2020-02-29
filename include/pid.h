@@ -3,8 +3,8 @@
     #include <Arduino.h>
     #define OUTPUT_MAX_LIMIT 255
     #define OUTPUT_MIN_LIMIT -255
-    #define MAX_ERROR_SUM 200
-    #define MIN_ERROR_SUM -200
+    #define MAX_ERROR_SUM 300
+    #define MIN_ERROR_SUM -300
     class Pid{
         float kp;
         float ki;
