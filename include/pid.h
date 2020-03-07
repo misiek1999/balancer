@@ -4,7 +4,7 @@
     #define OUTPUT_MAX_LIMIT 255
     #define OUTPUT_MIN_LIMIT -255
     #define MAX_ERROR_SUM 200
-    #define MIN_ERROR_SUM -200
+    #define MIN_ERROR_SUM -MAX_ERROR_SUM
     class Pid{
         float kp;
         float ki;
