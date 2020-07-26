@@ -7,6 +7,10 @@ SerialBLE(SSreceiver, SStransmitt)
     type_of_connection = connection_types::NO_CONNECTED;
     motor_angle = 0;
     SerialBLE.begin(9600);
+    // SerialBLE.print("AT+BAUD3");
+    // SerialBLE.begin(38400);
+    //Serial.println(SerialBLE.readString());
+    //delay(10000);
 }
 
 bool Connector::setup()

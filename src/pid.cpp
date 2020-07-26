@@ -13,8 +13,8 @@ Pid::Pid(float _kp, float _ki, float _kd)
 
 float Pid::calculate(float error)
 {
-    unsigned long now = millis();
-    float delta_time = (now - last_time) * 0.001;
+    unsigned long now = micros();
+    float delta_time = (now - last_time) * 0.000001;
     error_sum += (error + last_error)/2 *ki * delta_time;
     if (error_sum > MAX_ERROR_SUM)
         error_sum = MAX_ERROR_SUM;

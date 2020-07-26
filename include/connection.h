@@ -7,7 +7,7 @@
     // File with function to ble communication
     //#include "bleConnection.h" // Not necessery
     // File with class and function to radio communication via nrf24
-    #define STERING_MOTOR_ANGLE 1.0f
+    #define STERING_MOTOR_ANGLE 0.8f
     #define STERING_MOTOR_ROTATION 100.0f
     enum class connection_types{
         BLE =1,

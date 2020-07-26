@@ -5,18 +5,24 @@
 #include "connection.h"
 // Main loop delay parameters
 unsigned long start_loop_time;
-#define DELTA_TIME 100
 // PID parameters
-#define KP 45
-#define KI 130
-#define KD 0.01
+// #define KP 30
+// #define KI 110//110
+// #define KD 0.05
+// double KP = 34; //Set this first
+// double KD = 0.01; //Set this secound
+// double KI = 100; //Finally set this
+#define KP  40
+#define KD  0.05
+#define KI  40
+
 Pid pid(KP, KI, KD);
-#define STABLE_ANGLE -1.5f
+#define STABLE_ANGLE -2.0f
 //Motor angle stering
 Connector connect;
 #include <Wire.h>
-#include <MPU6050_6Axis_MotionApps20.h>
-//#define DEBUG_PRINT
+#include <MPU6050_6Axis_MotionApps_V6_12.h>
+#define DEBUG_PRINT
 MPU6050 mpu;
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -44,9 +50,12 @@ void dmpDataReady()
     mpuInterrupt = true;
 }
 int16_t motor_ster = 0;
+
 void setup()
 {
     Serial.begin(115200);
+    // while(true)
+    //     Serial.println("Sf");
     //Motor pinout
     pinMode(MOTOR_1_LEFT, OUTPUT);
     pinMode(MOTOR_1_RIGHT, OUTPUT);
@@ -76,13 +85,19 @@ void setup()
     mpu.setYGyroOffset(76);
     mpu.setZGyroOffset(-85);
     mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
+    
+    // Active DLPF mode in  
+    mpu.setDLPFMode(MPU6050_DLPF_BW_42);
+    //mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS_4);
+    //mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_500);
+    //mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0)
     {
         // // Calibration Time: generate offsets and calibrate our MPU6050
-        // mpu.CalibrateAccel(6);
-        // mpu.CalibrateGyro(6);
+        // mpu.CalibrateAccel(10);
+        // mpu.CalibrateGyro(10);
         // mpu.PrintActiveOffsets();
         // turn on the DMP, now that it's ready
         Serial.println(F("Enabling DMP..."));
@@ -101,6 +116,7 @@ void setup()
 
         // get expected DMP packet size for later comparison
         packetSize = mpu.dmpGetFIFOPacketSize();
+       
     }
     else
     {
@@ -111,14 +127,16 @@ void setup()
         Serial.print(F("DMP Initialization failed (code "));
         Serial.print(devStatus);
         Serial.println(F(")"));
+        delay(1000);
     }
     connect.setup();
+    
 }
 
 void loop()
 {
     connect.run();
-    start_loop_time = millis();
+    start_loop_time = micros();
       while (!mpuInterrupt && fifoCount < packetSize) {
         if (mpuInterrupt && fifoCount < packetSize) {
           // try to get out of the infinite loop 
@@ -174,10 +192,10 @@ void loop()
         Serial.print("\t");
         Serial.println(ypr[2] * 180 / M_PI);
 #endif
-        Serial.print(STABLE_ANGLE - ypr[1] * 180 / M_PI + motor_angle);
+        Serial.print(STABLE_ANGLE + ypr[1] * 180 / M_PI + motor_angle);
         Serial.print("\t");
-        motor_ster = pid.calculate(STABLE_ANGLE - (ypr[1] * 180 / M_PI) + motor_angle);
-        Serial.println(motor_ster);
+        motor_ster = pid.calculate(STABLE_ANGLE + (ypr[1] * 180 / M_PI) + motor_angle);
+        Serial.print(motor_ster);
     }
             // Serial.print("\t");
             // Serial.print(motor_rotation_force);
@@ -198,6 +216,9 @@ void loop()
         digitalWrite(MOTOR_1_LEFT, HIGH);
         digitalWrite(MOTOR_2_LEFT, HIGH);
     }
-    // put your main code here, to run repeatedly:
+     Serial.print(" L:");
+     Serial.println(micros() - start_loop_time);
+        // put your main code here, to run repeatedly:
     //delay(DELTA_TIME - (millis() - start_loop_time));
+    delay(10);
 }
